@@ -24,6 +24,18 @@ jobs:
       - name: Build site
         run: npm run build
 
+      - name: Debug: list build output and env
+        run: |
+          echo "Working directory: $(pwd)"
+          echo "Node version:" $(node -v)
+          echo "NPM version:" $(npm -v)
+          echo "Listing dist folder:" 
+          ls -la ./dist || true
+          echo "Listing dist/public folder:"
+          ls -la ./dist/public || true
+          echo "Print index.html head (if exists):"
+          [ -f ./dist/public/index.html ] && head -n 40 ./dist/public/index.html || echo 'index.html not found'
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
