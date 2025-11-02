@@ -66,7 +66,7 @@ export function AdvancedLandingPage({ onEnterDashboard, onStartDemo }: AdvancedL
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+  <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px] pointer-events-none" />
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <motion.div
@@ -92,19 +92,25 @@ export function AdvancedLandingPage({ onEnterDashboard, onStartDemo }: AdvancedL
               transition={{ delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
             >
-              <Button 
-                size="lg" 
-                onClick={onEnterDashboard}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 text-lg"
-                data-testid="button-enter-dashboard"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Enter Dashboard
-              </Button>
-              <Button 
-                size="lg" 
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    console.debug('[Landing] Enter Dashboard button clicked');
+                    try { onEnterDashboard(); } catch (e) { console.error('[Landing] onEnterDashboard threw', e); }
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 text-lg"
+                  data-testid="button-enter-dashboard"
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                  Enter Dashboard
+                </Button>
+              <Button
+                size="lg"
                 variant="outline"
-                onClick={() => onStartDemo('live-demo')}
+                onClick={() => {
+                  console.debug('[Landing] Live Demo button clicked -> full-demo');
+                  try { onStartDemo('full-demo'); } catch (e) { console.error('[Landing] onStartDemo threw', e); }
+                }}
                 className="border-slate-600 text-slate-300 hover:bg-slate-700 px-8 py-4 text-lg"
                 data-testid="button-live-demo"
               >

@@ -1,10 +1,35 @@
 import { useState, useEffect } from 'react';
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { motion, AnimatePresence } from 'framer-motion';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { queryClient } from "./lib/queryClient";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Satellite,
+  Brain,
+  Globe,
+  WifiOff,
+  Wifi,
+  Sparkles,
+  CheckCircle,
+  Users,
+  Shield,
+  Target,
+  Activity,
+  BarChart3,
+  MessageSquare,
+  ArrowLeft,
+  TrendingUp,
+  Leaf,
+  Mic,
+  Camera,
+  Zap,
+  Map,
+  Cloud,
+  Smartphone,
+  Home
+} from 'lucide-react';
+
+// Component imports
 import { AdvancedLandingPage } from './components/AdvancedLandingPage';
 import { Header } from './components/Header';
 import { AIAssistantChat } from './components/AIAssistantChat';
@@ -21,35 +46,14 @@ import { TechnologyStack } from './components/TechnologyStack';
 import { LanguageSupport } from './components/LanguageSupport';
 import { AnalyticsChart } from './components/AnalyticsChart';
 import { FarmMap } from './components/FarmMap';
-import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
-import { Badge } from './components/ui/badge';
-import { Button } from './components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-import { 
-  Satellite,
-  Brain,
-  TrendingUp,
-  Leaf,
-  MessageSquare,
-  Mic,
-  Camera,
-  BarChart3,
-  Globe,
-  Zap,
-  Activity,
-  CheckCircle,
-  Map,
-  Cloud,
-  Smartphone,
-  Wifi,
-  WifiOff,
-  Target,
-  Users,
-  Shield,
-  Sparkles,
-  Home,
-  ArrowLeft
-} from 'lucide-react';
+
+// UI Component imports
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { useToast } from '@/hooks/use-toast';
 import NotFound from "@/pages/not-found";
 
@@ -111,6 +115,8 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const { toast } = useToast();
+
+
 
   // Load dashboard data when entering dashboard
   useEffect(() => {
@@ -203,10 +209,15 @@ function AppContent() {
   };
 
   const handleEnterDashboard = () => {
+    // Debug: confirm button click reaches handler
+    console.debug('[App] handleEnterDashboard invoked');
     setCurrentView('dashboard');
+    setActiveTab('overview');
+    // Start loading the demo data
+    loadDashboardData();
     toast({
       title: "Welcome",
-      description: "Welcome to AI CropAdvisor Dashboard!"
+      description: "Welcome to AI CropAdvisor! Setting up your personalized dashboard..."
     });
   };
 
@@ -220,59 +231,71 @@ function AppContent() {
   };
 
   const handleStartDemo = (demoType: string) => {
+    // Debug: confirm demo button click and incoming demoType
+    console.debug('[App] handleStartDemo invoked, demoType=', demoType);
     setCurrentView('dashboard');
+    // Load the demo data first
+    loadDashboardData();
     
     // Navigate to appropriate section based on demo type
     switch (demoType) {
       case 'ai-recommendations':
         setActiveTab('recommendations');
         toast({
-          title: "Demo Started",
-          description: "AI Recommendations demo started!"
+          title: "AI Demo Started",
+          description: "Loading AI Recommendations demo..."
         });
         break;
       case 'disease-detection':
         setActiveTab('overview');
         toast({
-          title: "Demo Activated",
-          description: "Disease Scanner demo activated!"
+          title: "Disease Scanner Demo",
+          description: "Loading Disease Detection features..."
         });
         break;
       case 'voice-assistant':
         setActiveTab('chat');
         setIsVoiceActive(true);
         toast({
-          title: "Voice Activated",
-          description: "Voice Assistant activated!"
+          title: "Voice Assistant Demo",
+          description: "Activating multilingual voice support..."
         });
         break;
       case 'satellite-monitoring':
         setActiveTab('monitoring');
         toast({
-          title: "Demo Started",
-          description: "Satellite Monitoring demo started!"
+          title: "Satellite Demo",
+          description: "Loading satellite monitoring features..."
         });
         break;
       case 'offline-mode':
         setIsOfflineMode(true);
         setActiveTab('demo');
         toast({
-          title: "Offline Mode",
-          description: "Offline Mode activated!"
+          title: "Offline Demo",
+          description: "Switching to offline mode..."
         });
         break;
       case 'market-analysis':
         setActiveTab('analysis');
         toast({
-          title: "Demo Started",
-          description: "Market Analysis demo started!"
+          title: "Market Analysis Demo",
+          description: "Loading market analysis features..."
+        });
+        break;
+      case 'full-demo':
+      case 'live-demo':
+        setActiveTab('demo');
+        toast({
+          title: "Full Demo Started",
+          description: "Loading complete demo experience..."
         });
         break;
       default:
         setActiveTab('demo');
         toast({
           title: "Demo Started",
-          description: "Live demo started!"
+          description: "Starting interactive demo..."
         });
     }
   };
@@ -368,7 +391,7 @@ function AppContent() {
           animate={{ opacity: 1, y: 0 }}
           className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/20 backdrop-blur-sm mb-8"
         >
-          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px] pointer-events-none" />
           <div className="relative p-8">
             <div className="flex items-center justify-between">
               <div className="max-w-3xl">
@@ -872,23 +895,25 @@ function AppContent() {
   );
 }
 
-function Router() {
+function AppRouter() {
   return (
-    <Switch>
-      <Route path="/" component={AppContent} />
-      <Route component={NotFound} />
-    </Switch>
+    <Routes>
+      <Route path="/" element={<AppContent />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <Router>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <AppRouter />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </Router>
   );
 }
 

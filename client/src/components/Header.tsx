@@ -15,11 +15,12 @@ import {
 } from 'lucide-react';
 
 interface HeaderProps {
-  onVoiceToggle: (active: boolean) => void;
-  onChatToggle: (open: boolean) => void;
-  isVoiceActive: boolean;
-  isChatOpen: boolean;
-  onNavigate: (section: string) => void;
+  onVoiceToggle?: (active: boolean) => void;
+  onChatToggle?: (open: boolean) => void;
+  isVoiceActive?: boolean;
+  onBack?: () => void;
+  isChatOpen?: boolean;
+  onNavigate?: (section: string) => void;
 }
 
 export function Header({ 
@@ -57,7 +58,7 @@ export function Header({
           {/* Logo */}
           <div className="flex items-center">
             <button 
-              onClick={() => onNavigate('landing')}
+              onClick={() => onNavigate?.('landing')}
               className="flex items-center gap-3 hover:opacity-80 transition-opacity"
               data-testid="button-logo"
             >
@@ -71,7 +72,7 @@ export function Header({
                 {navItems.map((item) => (
                   <button
                     key={item.value}
-                    onClick={() => onNavigate(item.value)}
+                    onClick={() => onNavigate?.(item.value)}
                     className="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     data-testid={`nav-${item.value}`}
                   >
@@ -111,7 +112,7 @@ export function Header({
 
             {/* Voice Assistant Toggle */}
             <button 
-              onClick={() => onVoiceToggle(!isVoiceActive)}
+              onClick={() => onVoiceToggle && onVoiceToggle(!isVoiceActive)}
               className={`relative p-2 rounded-lg transition-all hover-lift ${
                 isVoiceActive 
                   ? 'bg-emerald-600 text-white' 
@@ -164,7 +165,7 @@ export function Header({
                 <button
                   key={item.value}
                   onClick={() => {
-                    onNavigate(item.value);
+                    onNavigate?.(item.value);
                     setIsMenuOpen(false);
                   }}
                   className="block w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-md transition-colors"
@@ -177,7 +178,7 @@ export function Header({
               {/* Mobile Voice & Chat */}
               <div className="flex gap-2 px-3 py-2">
                 <Button
-                  onClick={() => onVoiceToggle(!isVoiceActive)}
+                  onClick={() => onVoiceToggle && onVoiceToggle(!isVoiceActive)}
                   variant={isVoiceActive ? "default" : "ghost"}
                   size="sm"
                   className="flex-1"
@@ -187,7 +188,7 @@ export function Header({
                   Voice
                 </Button>
                 <Button
-                  onClick={() => onChatToggle(!isChatOpen)}
+                  onClick={() => onChatToggle && onChatToggle(!isChatOpen)}
                   variant={isChatOpen ? "default" : "ghost"}
                   size="sm"
                   className="flex-1"
