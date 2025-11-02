@@ -1,16 +1,13 @@
 jobs:
-name: Build and publish docs/ for GitHub Pages
+name: Build and deploy to GitHub Pages (gh-pages branch)
 
 on:
   push:
     branches:
       - main
-    # avoid running when only docs/ changes to prevent loops
-    paths-ignore:
-      - 'docs/**'
 
 jobs:
-  build-and-publish-docs:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -39,20 +36,10 @@ jobs:
           echo "Print index.html head (if exists):"
           [ -f ./dist/public/index.html ] && head -n 40 ./dist/public/index.html || echo 'index.html not found'
 
-      - name: Copy build to docs/
-        run: |
-          rm -rf docs || true
-          mkdir -p docs
-          cp -a dist/public/. docs/
-
-      - name: Commit and push docs to main
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs
-          if git diff --staged --quiet; then
-            echo "No changes to docs/ - skipping commit"
-          else
-            git commit -m "chore(docs): publish site build [skip ci]"
-            git push origin main
-          fi
+      - name: Deploy to gh-pages (JamesIves)
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: dist/public
+          clean: true
+          token: ${{ secrets.GITHUB_TOKEN }}
