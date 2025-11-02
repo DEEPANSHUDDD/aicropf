@@ -17,22 +17,23 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
+      # Install root dependencies
       - name: Install dependencies
-        run: |
-          cd client
-          npm ci
+        run: npm ci
 
-      - name: Build
+      # Build the Vite project inside client/
+      - name: Build project
         run: |
           cd client
           npm run build
@@ -40,10 +41,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # Upload the correct Vite output folder
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './client/dist'  # <-- where vite outputs the build
+          path: ./dist/public
 
   deploy:
     environment:
@@ -53,5 +55,8 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
         id: deployment
         uses: actions/deploy-pages@v4
