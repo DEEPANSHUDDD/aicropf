@@ -36,10 +36,23 @@ jobs:
           echo "Print index.html head (if exists):"
           [ -f ./dist/public/index.html ] && head -n 40 ./dist/public/index.html || echo 'index.html not found'
 
-      - name: Deploy to gh-pages (JamesIves)
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: dist/public
-          clean: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to gh-pages (manual git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Deploying dist/public to gh-pages branch via git"
+          set -e
+          if [ ! -d ./dist/public ]; then
+            echo "ERROR: build output not found at ./dist/public"
+            exit 1
+          fi
+          cd dist/public
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(deploy): publish site to gh-pages [skip ci]" || true
+          git branch -M gh-pages
+          REMOTE_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          git remote add origin "$REMOTE_URL"
+          git push -f origin gh-pages
